@@ -37,12 +37,15 @@ jobs:
           - os: ubuntu-latest
             artifact: ArchIToken-VPN-Client-linux-x86_64
             binary: ArchIToken-VPN-Client
+            output: ArchIToken-VPN-Client-linux-x86_64
           - os: windows-latest
             artifact: ArchIToken-VPN-Client-windows-x86_64
             binary: ArchIToken-VPN-Client.exe
+            output: ArchIToken-VPN-Client-windows-x86_64.exe
           - os: macos-latest
             artifact: ArchIToken-VPN-Client-macos-universal
             binary: ArchIToken-VPN-Client
+            output: ArchIToken-VPN-Client-macos-universal
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +64,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p release
-          cp "dist/${{ matrix.binary }}" "release/${{ matrix.binary }}"
+          cp "dist/${{ matrix.binary }}" "release/${{ matrix.output }}"
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
           if [ -d dist ] && ls dist/*.whl >/dev/null 2>&1; then cp dist/*.whl release/; fi
           if [ -d dist ] && ls dist/*.tar.gz >/dev/null 2>&1; then cp dist/*.tar.gz release/; fi
