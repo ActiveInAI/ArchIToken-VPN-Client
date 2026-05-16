@@ -123,16 +123,17 @@ jobs:
         run: |
           xcodebuild \
             -project ios/ArchITokenVPNClient.xcodeproj \
-            -target ArchITokenVPNClient \
+            -scheme ArchITokenVPNClient \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-derived \
             CODE_SIGNING_ALLOWED=NO \
             clean build
       - name: Prepare iOS simulator artifact
         run: |
           mkdir -p release
-          APP="$(find ~/Library/Developer/Xcode/DerivedData -path '*Build/Products/Debug-iphonesimulator/ArchITokenVPNClient.app' -type d | head -n 1)"
+          APP="build/ios-derived/Build/Products/Debug-iphonesimulator/ArchITokenVPNClient.app"
           test -d "$APP"
           ditto -c -k --sequesterRsrc --keepParent "$APP" release/ArchIToken-VPN-Client-ios-simulator.zip
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
