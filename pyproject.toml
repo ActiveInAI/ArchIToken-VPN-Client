@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "architoken-vpn-client"
+version = "0.1.0"
+description = "GPL cross-platform ArchIToken-VPN client MVP for Xray VLESS Reality profiles"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-or-later" }
+authors = [
+  { name = "ActiveInAI" }
+]
+keywords = ["xray", "vless", "reality", "vpn", "architoken"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: X11 Applications",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Internet :: Proxy Servers",
+]
+
+[project.urls]
+Homepage = "https://github.com/ActiveInAI/ArchIToken-VPN-Client"
+Operations = "https://github.com/ActiveInAI/ArchIToken-VPN"
+
+[project.scripts]
+architoken-vpn-client = "architoken_vpn_client.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

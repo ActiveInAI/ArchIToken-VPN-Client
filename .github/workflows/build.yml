@@ -1,0 +1,89 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Scan secrets
+        run: ./scripts/scan-secrets.sh
+
+  package:
+    name: Package ${{ matrix.os }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: ArchIToken-VPN-Client-linux-x86_64
+            binary: ArchIToken-VPN-Client
+          - os: windows-latest
+            artifact: ArchIToken-VPN-Client-windows-x86_64
+            binary: ArchIToken-VPN-Client.exe
+          - os: macos-latest
+            artifact: ArchIToken-VPN-Client-macos-universal
+            binary: ArchIToken-VPN-Client
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build pyinstaller
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Build Python distributions
+        run: python -m build
+      - name: Build executable
+        run: python -m PyInstaller --noconfirm --onefile --name ArchIToken-VPN-Client --collect-submodules tkinter packaging/pyinstaller_entry.py
+      - name: Prepare artifact
+        shell: bash
+        run: |
+          mkdir -p release
+          cp "dist/${{ matrix.binary }}" "release/${{ matrix.binary }}"
+          cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
+          if [ -d dist ] && ls dist/*.whl >/dev/null 2>&1; then cp dist/*.whl release/; fi
+          if [ -d dist ] && ls dist/*.tar.gz >/dev/null 2>&1; then cp dist/*.tar.gz release/; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/
+
+  release:
+    name: Publish Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Flatten artifacts
+        run: |
+          mkdir release
+          find artifacts -type f -maxdepth 3 -print -exec cp {} release/ \;
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true

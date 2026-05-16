@@ -51,6 +51,52 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 - 兼容 v2rayN，先做配置助手和订阅生成器。
 - fork v2rayN 并改造为 ArchIToken-VPN Windows，按 GPL-3.0 发布完整源码。
 
+## 当前 MVP
+
+当前 `0.1.0` 版本已经包含一个可运行的桌面/CLI MVP：
+
+- VLESS Reality 链接解析
+- base64/plain 订阅解析
+- Xray outbound JSON 生成
+- Tk 桌面 UI
+- 跨平台 PyInstaller 打包工作流
+- tag 发布时自动生成 Release 安装包/可执行文件
+
+## 下载
+
+安装包会发布在：
+
+<https://github.com/ActiveInAI/ArchIToken-VPN-Client/releases>
+
+首次自动构建目标：
+
+- `ArchIToken-VPN-Client-windows-x86_64`
+- `ArchIToken-VPN-Client-linux-x86_64`
+- `ArchIToken-VPN-Client-macos-universal`
+
+## 本地运行
+
+```bash
+python -m pip install -e .
+architoken-vpn-client gui
+```
+
+CLI 示例：
+
+```bash
+architoken-vpn-client parse 'vless://...#USA-LAX-A1'
+architoken-vpn-client xray-outbound 'vless://...#USA-LAX-A1'
+architoken-vpn-client subscription ./subscription.txt
+```
+
+## 本地打包
+
+```bash
+./scripts/build-local.sh
+```
+
+产物会写入 `dist/`。
+
 ## 仓库结构
 
 ```text
@@ -58,8 +104,10 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 ├── docs/                 # 设计、部署、平台路线和许可说明
 ├── examples/             # 脱敏节点、订阅和链接示例
 ├── packages/             # 后续各平台客户端包
+├── src/                  # Python MVP 客户端
 ├── shared/               # 共享协议模型和配置 schema
 ├── scripts/              # 安全扫描和开发辅助脚本
+├── tests/                # 单元测试
 ├── LICENSE
 └── THIRD_PARTY_NOTICES.md
 ```
@@ -88,4 +136,3 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 - Xray-core v26.3.27: <https://github.com/XTLS/Xray-core/releases/tag/v26.3.27>
 - v2rayN 7.21.3: <https://github.com/2dust/v2rayN/releases/tag/7.21.3>
 - v2rayNG releases: <https://github.com/2dust/v2rayNG/releases>
-
