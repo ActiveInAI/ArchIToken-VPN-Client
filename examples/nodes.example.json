@@ -1,0 +1,22 @@
+{
+  "nodes": [
+    {
+      "code": "USA-LAX-A1",
+      "label": "美国 洛杉矶",
+      "protocol": "vless",
+      "address": "203.0.113.10",
+      "port": 443,
+      "uuid": "{MEMBER_UUID}",
+      "transport": "tcp",
+      "security": "reality",
+      "sni": "www.microsoft.com",
+      "fingerprint": "chrome",
+      "publicKey": "{REALITY_PUBLIC_KEY}",
+      "shortId": "{SHORT_ID}",
+      "flow": "xtls-rprx-vision",
+      "subscription": "https://203.0.113.10:2096/sub/{SUBSCRIPTION_TOKEN}",
+      "enabled": true
+    }
+  ]
+}
+

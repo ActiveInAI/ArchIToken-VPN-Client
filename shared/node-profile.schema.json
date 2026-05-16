@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://architoken.local/schema/node-profile.schema.json",
+  "title": "ArchIToken VPN Node Profile",
+  "type": "object",
+  "required": ["code", "protocol", "address", "port", "security"],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}-[A-Z0-9]{3}-A[0-9]+$",
+      "examples": ["USA-LAX-A1", "NLD-AMS-A1"]
+    },
+    "label": { "type": "string" },
+    "protocol": { "type": "string", "enum": ["vless"] },
+    "address": { "type": "string" },
+    "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+    "uuid": { "type": "string" },
+    "transport": { "type": "string", "default": "tcp" },
+    "security": { "type": "string", "enum": ["reality"] },
+    "sni": { "type": "string" },
+    "fingerprint": { "type": "string", "default": "chrome" },
+    "publicKey": { "type": "string" },
+    "shortId": { "type": "string" },
+    "flow": { "type": "string", "default": "xtls-rprx-vision" },
+    "subscription": { "type": "string" },
+    "enabled": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}
+
