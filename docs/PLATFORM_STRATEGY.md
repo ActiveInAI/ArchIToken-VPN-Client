@@ -17,6 +17,11 @@
 - 保留源码发布
 - 明确 ArchIToken 定制差异
 
+当前 Release 覆盖：
+
+- x86_64 executable
+- arm64 executable
+
 ## Android
 
 优先兼容 v2rayNG 的用户习惯：
@@ -34,6 +39,11 @@
 - 保留源码发布
 - 明确 ArchIToken 定制差异
 
+当前 Release 覆盖：
+
+- universal debug APK
+- 真实 release APK/AAB 需要 Android signing key
+
 ## Linux
 
 与 ArchIToken-VPN 主仓库协同：
@@ -41,6 +51,11 @@
 - 托盘和诊断先由主仓库维护
 - 客户端仓库后续可做统一桌面壳
 - Xray 入口保持 10808/10809 兼容
+
+当前 Release 覆盖：
+
+- x86_64 executable
+- arm64 executable
 
 ## macOS
 
@@ -52,7 +67,17 @@
 
 第二阶段评估原生 Network Extension 或桌面客户端。
 
+当前 Release 覆盖：
+
+- x86_64 executable
+- arm64 executable
+- 未签名、未 notarize；分发给普通用户前需要 Apple Developer 证书
+
 ## iOS
 
 先保持文档和订阅兼容。iOS 上架、Network Extension、证书和审核要求需要单独评估。
 
+当前 Release 覆盖：
+
+- unsigned simulator build
+- 真机 IPA / TestFlight / App Store 需要 Apple Developer 账号、证书和 provisioning profile

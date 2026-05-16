@@ -1,0 +1,16 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "ai.activein.architokenvpnclient"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "ai.activein.architokenvpnclient"
+        minSdk 23
+        targetSdk 35
+        versionCode 20
+        versionName "0.2.0"
+    }
+}
