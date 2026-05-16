@@ -50,7 +50,7 @@ jobs:
             artifact: ArchIToken-VPN-Client-windows-arm64
             binary: ArchIToken-VPN-Client.exe
             output: ArchIToken-VPN-Client-windows-arm64.exe
-          - os: macos-13
+          - os: macos-15-intel
             artifact: ArchIToken-VPN-Client-macos-x86_64
             binary: ArchIToken-VPN-Client
             output: ArchIToken-VPN-Client-macos-x86_64
