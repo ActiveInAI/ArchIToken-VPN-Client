@@ -101,16 +101,18 @@ jobs:
           gradle-version: "8.10.2"
       - name: Install Android SDK packages
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
-      - name: Build debug APK
-        run: gradle :android:assembleDebug --no-daemon
+      - name: Build Android packages
+        run: gradle :android:assembleDebug :android:assembleRelease :android:bundleRelease --no-daemon
       - name: Prepare Android artifact
         run: |
           mkdir -p release
           cp android/build/outputs/apk/debug/android-debug.apk release/ArchIToken-VPN-Client-android-universal-debug.apk
+          cp android/build/outputs/apk/release/android-release-unsigned.apk release/ArchIToken-VPN-Client-android-universal-release-unsigned.apk
+          cp android/build/outputs/bundle/release/android-release.aab release/ArchIToken-VPN-Client-android-universal-release-unsigned.aab
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
       - uses: actions/upload-artifact@v4
         with:
-          name: ArchIToken-VPN-Client-android-universal-debug
+          name: ArchIToken-VPN-Client-android
           path: release/
 
   ios:
@@ -136,10 +138,11 @@ jobs:
           APP="build/ios-derived/Build/Products/Debug-iphonesimulator/ArchITokenVPNClient.app"
           test -d "$APP"
           ditto -c -k --sequesterRsrc --keepParent "$APP" release/ArchIToken-VPN-Client-ios-simulator.zip
+          ditto -c -k ios release/ArchIToken-VPN-Client-ios-source.zip
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
       - uses: actions/upload-artifact@v4
         with:
-          name: ArchIToken-VPN-Client-ios-simulator
+          name: ArchIToken-VPN-Client-ios
           path: release/
 
   release:

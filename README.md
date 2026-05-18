@@ -53,15 +53,15 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 
 ## 当前 MVP
 
-当前 `0.2.0` 版本已经包含一个可运行的跨平台 MVP：
+当前 `0.3.0` 版本已经包含一个可运行的跨平台 MVP：
 
 - VLESS Reality 链接解析
 - base64/plain 订阅解析
 - Xray outbound JSON 生成
 - Tk 桌面 UI
 - Windows / Linux / macOS x64 和 ARM64 PyInstaller 打包工作流
-- Android debug APK 骨架
-- iOS simulator 未签名构建骨架
+- Android 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、debug/release unsigned APK 和 AAB
+- iOS 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、simulator 构建和 Xcode 工程包
 - tag 发布时自动生成 Release 安装包/可执行文件
 
 ## 下载
@@ -79,9 +79,12 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 - `ArchIToken-VPN-Client-macos-x86_64`
 - `ArchIToken-VPN-Client-macos-arm64`
 - `ArchIToken-VPN-Client-android-universal-debug.apk`
+- `ArchIToken-VPN-Client-android-universal-release-unsigned.apk`
+- `ArchIToken-VPN-Client-android-universal-release-unsigned.aab`
 - `ArchIToken-VPN-Client-ios-simulator.zip`
+- `ArchIToken-VPN-Client-ios-source.zip`
 
-iOS 真机安装包和 TestFlight 发布需要 Apple Developer 证书、签名身份和 provisioning profile；公开 CI 只能生成未签名 simulator 构建。
+Android release 产物当前为 unsigned，上传商店或企业分发前需要接入 keystore 签名。iOS 真机安装包和 TestFlight 发布需要 Apple Developer 证书、签名身份和 provisioning profile；公开 CI 只能生成未签名 simulator 构建和 Xcode 工程包。
 
 ## 本地运行
 

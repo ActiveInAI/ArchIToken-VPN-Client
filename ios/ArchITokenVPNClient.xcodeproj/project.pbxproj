@@ -159,11 +159,11 @@
         CODE_SIGN_STYLE = Manual;
         CODE_SIGNING_ALLOWED = NO;
         CODE_SIGNING_REQUIRED = NO;
-        CURRENT_PROJECT_VERSION = 20;
+        CURRENT_PROJECT_VERSION = 30;
         GENERATE_INFOPLIST_FILE = NO;
         INFOPLIST_FILE = ArchITokenVPNClient/Info.plist;
         IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-        MARKETING_VERSION = 0.2.0;
+        MARKETING_VERSION = 0.3.0;
         PRODUCT_BUNDLE_IDENTIFIER = ai.activein.ArchITokenVPNClient;
         PRODUCT_NAME = "$(TARGET_NAME)";
         SDKROOT = iphoneos;
@@ -180,11 +180,11 @@
         CODE_SIGN_STYLE = Manual;
         CODE_SIGNING_ALLOWED = NO;
         CODE_SIGNING_REQUIRED = NO;
-        CURRENT_PROJECT_VERSION = 20;
+        CURRENT_PROJECT_VERSION = 30;
         GENERATE_INFOPLIST_FILE = NO;
         INFOPLIST_FILE = ArchITokenVPNClient/Info.plist;
         IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-        MARKETING_VERSION = 0.2.0;
+        MARKETING_VERSION = 0.3.0;
         PRODUCT_BUNDLE_IDENTIFIER = ai.activein.ArchITokenVPNClient;
         PRODUCT_NAME = "$(TARGET_NAME)";
         SDKROOT = iphoneos;

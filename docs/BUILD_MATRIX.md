@@ -1,6 +1,6 @@
 # Build Matrix
 
-`v0.2.0` 开始，Release 工作流覆盖以下目标。
+`v0.3.0` 开始，Release 工作流覆盖以下目标。
 
 ## Desktop
 
@@ -17,12 +17,15 @@
 
 | Platform | Coverage | Artifact |
 | --- | --- | --- |
-| Android | universal debug APK | `ArchIToken-VPN-Client-android-universal-debug.apk` |
+| Android | debug APK | `ArchIToken-VPN-Client-android-universal-debug.apk` |
+| Android | unsigned release APK | `ArchIToken-VPN-Client-android-universal-release-unsigned.apk` |
+| Android | unsigned release AAB | `ArchIToken-VPN-Client-android-universal-release-unsigned.aab` |
 | iOS | unsigned simulator build | `ArchIToken-VPN-Client-ios-simulator.zip` |
+| iOS | Xcode source package | `ArchIToken-VPN-Client-ios-source.zip` |
 
 ## Signing Boundary
 
 - Windows binaries are unsigned until a code-signing certificate is configured.
 - macOS binaries are unsigned and not notarized until Apple Developer signing is configured.
-- Android debug APK is for internal validation. Release APK/AAB needs signing keys.
-- iOS true device install/TestFlight requires Apple Developer certificates and provisioning profiles.
+- Android debug APK is for internal validation. Release APK/AAB is generated unsigned until keystore secrets are configured.
+- iOS simulator artifacts are installable only on simulators. True device install/TestFlight requires Apple Developer certificates and provisioning profiles.
