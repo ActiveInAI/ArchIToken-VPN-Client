@@ -16,8 +16,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install package
@@ -60,8 +60,8 @@ jobs:
             output: ArchIToken-VPN-Client-macos-arm64
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install build tools
@@ -80,7 +80,7 @@ jobs:
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
           if [ -d dist ] && ls dist/*.whl >/dev/null 2>&1; then cp dist/*.whl release/; fi
           if [ -d dist ] && ls dist/*.tar.gz >/dev/null 2>&1; then cp dist/*.tar.gz release/; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}
           path: release/
@@ -96,13 +96,13 @@ jobs:
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: "8.10.2"
       - name: Install Android SDK packages
@@ -141,7 +141,7 @@ jobs:
             cp android/build/outputs/bundle/release/android-release.aab release/ArchIToken-VPN-Client-android-universal-release-unsigned.aab
           fi
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ArchIToken-VPN-Client-android
           path: release/
@@ -161,7 +161,7 @@ jobs:
       IOS_EXPORT_OPTIONS_PLIST_BASE64: ${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}
       ARCHITOKEN_PACKET_CORE_ZIP_BASE64: ${{ secrets.ARCHITOKEN_PACKET_CORE_ZIP_BASE64 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install private iOS PacketCore
         run: |
           if [ -z "$ARCHITOKEN_PACKET_CORE_ZIP_BASE64" ]; then
@@ -201,7 +201,7 @@ jobs:
           if [ -f build/ios-signed/ArchIToken-VPN-Client.ipa ]; then
             cp build/ios-signed/ArchIToken-VPN-Client.ipa release/
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ArchIToken-VPN-Client-ios
           path: release/
@@ -212,14 +212,14 @@ jobs:
     needs: [package, android, ios]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
       - name: Flatten artifacts
         run: |
           mkdir release
           find artifacts -maxdepth 3 -type f -print -exec cp {} release/ \;
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: release/*
           generate_release_notes: true
