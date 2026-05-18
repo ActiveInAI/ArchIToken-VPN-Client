@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.VpnService;
 import android.util.Base64;
 import android.view.Gravity;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MainActivity extends Activity {
+    private static final int REQUEST_VPN = 7011;
     private EditText linkInput;
     private EditText subscriptionInput;
     private TextView output;
@@ -68,11 +71,17 @@ public class MainActivity extends Activity {
         rowTwo.addView(button("复制结果", v -> copyOutput()));
         root.addView(rowTwo);
 
+        LinearLayout rowThree = row();
+        rowThree.addView(button("保存 VPN 配置", v -> saveTunnelConfig()));
+        rowThree.addView(button("启动 VPN", v -> requestStartTunnel()));
+        rowThree.addView(button("停止 VPN", v -> stopTunnel()));
+        root.addView(rowThree);
+
         output = new TextView(this);
         output.setTextColor(Color.rgb(226, 232, 240));
         output.setTextSize(14);
         output.setTypeface(android.graphics.Typeface.MONOSPACE);
-        output.setText("等待导入 VLESS Reality 链接或订阅。");
+        output.setText("等待导入 VLESS Reality 链接或订阅。\n" + ArchITokenVpnService.status(this));
 
         ScrollView scroll = new ScrollView(this);
         scroll.addView(output);
@@ -83,6 +92,16 @@ public class MainActivity extends Activity {
         ));
 
         setContentView(root);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VPN && resultCode == RESULT_OK) {
+            startTunnel();
+        } else if (requestCode == REQUEST_VPN) {
+            output.setText("用户未授予 Android VPN 权限。");
+        }
     }
 
     private EditText input(String hint) {
@@ -138,7 +157,7 @@ public class MainActivity extends Activity {
                 HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setConnectTimeout(10000);
                 conn.setReadTimeout(15000);
-                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.3.0");
+                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.4.0");
                 int code = conn.getResponseCode();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder body = new StringBuilder();
@@ -216,6 +235,42 @@ public class MainActivity extends Activity {
     private void renderXrayJson() {
         if (lastNode == null) parseCurrentInput();
         if (lastNode != null) output.setText(lastNode.xrayJson());
+    }
+
+    private void saveTunnelConfig() {
+        if (lastNode == null) parseCurrentInput();
+        if (lastNode == null) return;
+        ArchITokenVpnService.saveConfig(this, lastNode.xrayJson());
+        output.setText("已保存 VPN 配置。\n" + lastNode.summary() + "\n\n" + ArchITokenVpnService.status(this));
+    }
+
+    private void requestStartTunnel() {
+        if (lastNode == null) parseCurrentInput();
+        if (lastNode == null) return;
+        ArchITokenVpnService.saveConfig(this, lastNode.xrayJson());
+        Intent prepare = VpnService.prepare(this);
+        if (prepare != null) {
+            startActivityForResult(prepare, REQUEST_VPN);
+            return;
+        }
+        startTunnel();
+    }
+
+    private void startTunnel() {
+        if (lastNode == null) parseCurrentInput();
+        if (lastNode == null) return;
+        Intent intent = new Intent(this, ArchITokenVpnService.class);
+        intent.setAction(ArchITokenVpnService.ACTION_START);
+        intent.putExtra(ArchITokenVpnService.EXTRA_XRAY_OUTBOUND, lastNode.xrayJson());
+        startService(intent);
+        output.setText("已请求启动 VPN。\n" + ArchITokenVpnService.status(this));
+    }
+
+    private void stopTunnel() {
+        Intent intent = new Intent(this, ArchITokenVpnService.class);
+        intent.setAction(ArchITokenVpnService.ACTION_STOP);
+        startService(intent);
+        output.setText("已请求停止 VPN。");
     }
 
     private void pasteClipboard() {

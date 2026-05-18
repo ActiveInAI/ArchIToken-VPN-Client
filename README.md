@@ -53,16 +53,18 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 
 ## 当前 MVP
 
-当前 `0.3.0` 版本已经包含一个可运行的跨平台 MVP：
+当前 `0.4.0` 版本已经包含一个可运行的跨平台 MVP：
 
 - VLESS Reality 链接解析
 - base64/plain 订阅解析
 - Xray outbound JSON 生成
 - Tk 桌面 UI
 - Windows / Linux / macOS x64 和 ARM64 PyInstaller 打包工作流
-- Android 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、debug/release unsigned APK 和 AAB
-- iOS 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、simulator 构建和 Xcode 工程包
+- Android 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、系统 `VpnService` 权限申请、VPN 启动/停止入口、运行时缺失保护、debug/release unsigned APK 和 AAB
+- iOS 客户端：VLESS Reality 导入、订阅拉取、剪贴板导入、Xray outbound JSON 导出、NetworkExtension 配置管理、PacketTunnelProvider 模板、simulator 构建和 Xcode 工程包
 - tag 发布时自动生成 Release 安装包/可执行文件
+
+移动端 VPN 隧道说明见 [docs/MOBILE_TUNNEL.md](docs/MOBILE_TUNNEL.md)，签名边界见 [docs/SIGNING.md](docs/SIGNING.md)。
 
 ## 下载
 

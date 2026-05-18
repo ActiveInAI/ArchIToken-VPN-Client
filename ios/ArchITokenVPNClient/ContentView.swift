@@ -1,12 +1,15 @@
 import SwiftUI
 import Foundation
 import UIKit
+import NetworkExtension
 
 struct ContentView: View {
     @State private var link: String = ""
     @State private var subscriptionURL: String = ""
     @State private var output: String = "等待导入 VLESS Reality 链接或订阅。"
+    @State private var tunnelStatus: String = "系统 VPN 尚未配置。"
     @State private var lastNode: VPNNode?
+    private let tunnelManager = TunnelManager()
 
     var body: some View {
         NavigationView {
@@ -35,6 +38,22 @@ struct ContentView: View {
                     Button("复制结果", action: copyOutput)
                 }
                 .buttonStyle(.borderedProminent)
+
+                HStack {
+                    Button("保存 VPN 配置", action: saveTunnelConfig)
+                    Button("安装 VPN 配置", action: installTunnelProfile)
+                }
+                .buttonStyle(.bordered)
+
+                HStack {
+                    Button("启动 VPN", action: startTunnel)
+                    Button("停止 VPN", action: stopTunnel)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Text(tunnelStatus)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
 
                 ScrollView {
                     Text(output)
@@ -70,7 +89,7 @@ struct ContentView: View {
         }
         output = "正在拉取订阅..."
         var request = URLRequest(url: url)
-        request.setValue("ArchIToken-VPN-iOS/0.3.0", forHTTPHeaderField: "User-Agent")
+        request.setValue("ArchIToken-VPN-iOS/0.4.0", forHTTPHeaderField: "User-Agent")
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error {
@@ -109,6 +128,50 @@ struct ContentView: View {
     private func copyOutput() {
         UIPasteboard.general.string = output
     }
+
+    private func ensureNode() -> VPNNode? {
+        if lastNode == nil {
+            parseCurrentInput()
+        }
+        return lastNode
+    }
+
+    private func saveTunnelConfig() {
+        guard let node = ensureNode() else { return }
+        tunnelManager.saveLocalConfig(node)
+        tunnelStatus = "已保存 VPN 配置。"
+        output = node.summary
+    }
+
+    private func installTunnelProfile() {
+        guard let node = ensureNode() else { return }
+        tunnelStatus = "正在安装 iOS VPN 配置..."
+        tunnelManager.installProfile(node) { result in
+            switch result {
+            case .success(let message):
+                tunnelStatus = message
+            case .failure(let error):
+                tunnelStatus = "安装失败: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func startTunnel() {
+        tunnelStatus = "正在启动 iOS VPN..."
+        tunnelManager.startTunnel { result in
+            switch result {
+            case .success(let message):
+                tunnelStatus = message
+            case .failure(let error):
+                tunnelStatus = "启动失败: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func stopTunnel() {
+        tunnelManager.stopTunnel()
+        tunnelStatus = "已请求停止 iOS VPN。"
+    }
 }
 
 private func firstVless(in text: String) -> String? {
@@ -138,7 +201,7 @@ private enum VPNParseError: LocalizedError {
     }
 }
 
-private struct VPNNode {
+struct VPNNode {
     let code: String
     let uuid: String
     let address: String

@@ -48,5 +48,12 @@ Those values should live only in GitHub Actions secrets or a private signing sys
 - Paste from clipboard.
 - Copy parsed output.
 - Generate Xray outbound JSON for the imported node.
+- Android: request system VPN permission, persist the selected Xray outbound, and expose start/stop controls through `VpnService`.
+- iOS: install/start/stop a `NETunnelProviderManager` profile and ship a PacketTunnelProvider source template.
 
-This is a configuration/import assistant. Full mobile VPN tunnel control requires integrating Xray-core mobile runtimes or forking an upstream GPL client such as v2rayNG and preserving GPL source distribution.
+The app now has the system VPN control layer. Production traffic forwarding still requires a bundled or privately supplied mobile packet runner:
+
+- Android: Xray-compatible runtime plus tun2socks/packet bridge, or a GPL-compliant v2rayNG fork.
+- iOS: signed Network Extension target plus an Xray-compatible PacketTunnel runner.
+
+The Android service refuses to take over traffic when those runtime files are missing, so a test install will not accidentally blackhole the device network.

@@ -1,6 +1,6 @@
 # Build Matrix
 
-`v0.3.0` 开始，Release 工作流覆盖以下目标。
+`v0.4.0` 开始，Release 工作流覆盖以下目标。
 
 ## Desktop
 
@@ -23,9 +23,16 @@
 | iOS | unsigned simulator build | `ArchIToken-VPN-Client-ios-simulator.zip` |
 | iOS | Xcode source package | `ArchIToken-VPN-Client-ios-source.zip` |
 
+## Mobile VPN Controls
+
+| Platform | Coverage |
+| --- | --- |
+| Android | `VpnService` declaration, VPN permission flow, start/stop service entry points, Xray outbound persistence, runtime guard before traffic takeover |
+| iOS | `NETunnelProviderManager` profile install/start/stop flow, Xray outbound persistence, PacketTunnelProvider source template |
+
 ## Signing Boundary
 
 - Windows binaries are unsigned until a code-signing certificate is configured.
 - macOS binaries are unsigned and not notarized until Apple Developer signing is configured.
-- Android debug APK is for internal validation. Release APK/AAB is generated unsigned until keystore secrets are configured.
-- iOS simulator artifacts are installable only on simulators. True device install/TestFlight requires Apple Developer certificates and provisioning profiles.
+- Android debug APK is for internal validation. Release APK/AAB is generated unsigned until a project-owned private keystore is configured.
+- iOS simulator artifacts are installable only on simulators. True device install/TestFlight requires Apple Developer certificates, provisioning profiles, and Network Extension entitlements.

@@ -9,9 +9,9 @@
   <key>CFBundleName</key>
   <string>ArchITokenVPNClient</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.3.0</string>
+  <string>0.4.0</string>
   <key>CFBundleVersion</key>
-  <string>30</string>
+  <string>40</string>
   <key>UILaunchScreen</key>
   <dict/>
 </dict>
