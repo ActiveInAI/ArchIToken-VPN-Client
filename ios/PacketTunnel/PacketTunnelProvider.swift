@@ -2,6 +2,7 @@ import NetworkExtension
 
 final class PacketTunnelProvider: NEPacketTunnelProvider {
     private var tunnelSettings: NEPacketTunnelNetworkSettings?
+    private let runtime = PacketRuntime()
 
     override func startTunnel(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "10.66.0.1")
@@ -15,13 +16,14 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
                 completionHandler(error)
                 return
             }
-            // Production builds must attach an Xray-compatible packet runner here.
-            // The extension template is intentionally present without bundled secrets or node data.
-            completionHandler(nil)
+            let config = (self.protocolConfiguration as? NETunnelProviderProtocol)?
+                .providerConfiguration?["xrayOutbound"] as? String ?? ""
+            self.runtime.start(provider: self, xrayOutbound: config, completionHandler: completionHandler)
         }
     }
 
     override func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
+        runtime.stop()
         tunnelSettings = nil
         completionHandler()
     }

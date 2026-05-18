@@ -89,6 +89,12 @@ jobs:
     name: Package Android
     needs: test
     runs-on: ubuntu-latest
+    env:
+      ANDROID_RUNTIME_ZIP_BASE64: ${{ secrets.ANDROID_RUNTIME_ZIP_BASE64 }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -101,14 +107,39 @@ jobs:
           gradle-version: "8.10.2"
       - name: Install Android SDK packages
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Install private Android runtime
+        shell: bash
+        run: |
+          if [ -z "$ANDROID_RUNTIME_ZIP_BASE64" ]; then
+            echo "No private Android runtime supplied; building shell APK."
+            exit 0
+          fi
+          mkdir -p android/src/main/assets/architoken-mobile
+          echo "$ANDROID_RUNTIME_ZIP_BASE64" | base64 --decode > /tmp/architoken-android-runtime.zip
+          unzip -o /tmp/architoken-android-runtime.zip -d android/src/main/assets/architoken-mobile
+      - name: Configure Android release signing
+        shell: bash
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "No Android keystore supplied; release APK/AAB will remain unsigned."
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/android-signing"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/android-signing/architoken-release.jks"
+          echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/android-signing/architoken-release.jks" >> "$GITHUB_ENV"
       - name: Build Android packages
         run: gradle :android:assembleDebug :android:assembleRelease :android:bundleRelease --no-daemon
       - name: Prepare Android artifact
         run: |
           mkdir -p release
           cp android/build/outputs/apk/debug/android-debug.apk release/ArchIToken-VPN-Client-android-universal-debug.apk
-          cp android/build/outputs/apk/release/android-release-unsigned.apk release/ArchIToken-VPN-Client-android-universal-release-unsigned.apk
-          cp android/build/outputs/bundle/release/android-release.aab release/ArchIToken-VPN-Client-android-universal-release-unsigned.aab
+          if [ -n "${ANDROID_KEYSTORE_FILE:-}" ] && [ -f android/build/outputs/apk/release/android-release.apk ]; then
+            cp android/build/outputs/apk/release/android-release.apk release/ArchIToken-VPN-Client-android-universal-release-signed.apk
+            cp android/build/outputs/bundle/release/android-release.aab release/ArchIToken-VPN-Client-android-universal-release-signed.aab
+          else
+            cp android/build/outputs/apk/release/android-release-unsigned.apk release/ArchIToken-VPN-Client-android-universal-release-unsigned.apk
+            cp android/build/outputs/bundle/release/android-release.aab release/ArchIToken-VPN-Client-android-universal-release-unsigned.aab
+          fi
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
       - uses: actions/upload-artifact@v4
         with:
@@ -119,8 +150,28 @@ jobs:
     name: Package iOS simulator
     needs: test
     runs-on: macos-14
+    env:
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      IOS_APP_BUNDLE_ID: ${{ secrets.IOS_APP_BUNDLE_ID }}
+      IOS_TUNNEL_BUNDLE_ID: ${{ secrets.IOS_TUNNEL_BUNDLE_ID }}
+      APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+      APPLE_TUNNEL_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_TUNNEL_PROVISIONING_PROFILE_BASE64 }}
+      IOS_EXPORT_OPTIONS_PLIST_BASE64: ${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}
+      ARCHITOKEN_PACKET_CORE_ZIP_BASE64: ${{ secrets.ARCHITOKEN_PACKET_CORE_ZIP_BASE64 }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install private iOS PacketCore
+        run: |
+          if [ -z "$ARCHITOKEN_PACKET_CORE_ZIP_BASE64" ]; then
+            echo "No private PacketCore supplied; building public simulator source."
+            exit 0
+          fi
+          mkdir -p ios/PrivateFrameworks
+          echo "$ARCHITOKEN_PACKET_CORE_ZIP_BASE64" | base64 --decode > /tmp/architoken-packet-core.zip
+          unzip -o /tmp/architoken-packet-core.zip -d ios/PrivateFrameworks
+          unzip -o /tmp/architoken-packet-core.zip -d .
       - name: Build iOS simulator app
         run: |
           xcodebuild \
@@ -140,6 +191,16 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent "$APP" release/ArchIToken-VPN-Client-ios-simulator.zip
           ditto -c -k ios release/ArchIToken-VPN-Client-ios-source.zip
           cp README.md LICENSE THIRD_PARTY_NOTICES.md release/
+      - name: Build signed iOS archive
+        run: |
+          if [ -z "$APPLE_CERTIFICATE_BASE64" ] || [ -z "$APPLE_PROVISIONING_PROFILE_BASE64" ] || [ -z "$APPLE_TUNNEL_PROVISIONING_PROFILE_BASE64" ]; then
+            echo "No complete Apple signing material supplied; skipping signed IPA."
+            exit 0
+          fi
+          ./scripts/build-ios-signed.sh
+          if [ -f build/ios-signed/ArchIToken-VPN-Client.ipa ]; then
+            cp build/ios-signed/ArchIToken-VPN-Client.ipa release/
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: ArchIToken-VPN-Client-ios

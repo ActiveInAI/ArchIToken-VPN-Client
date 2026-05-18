@@ -89,7 +89,7 @@ struct ContentView: View {
         }
         output = "正在拉取订阅..."
         var request = URLRequest(url: url)
-        request.setValue("ArchIToken-VPN-iOS/0.4.0", forHTTPHeaderField: "User-Agent")
+        request.setValue("ArchIToken-VPN-iOS/0.5.0", forHTTPHeaderField: "User-Agent")
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error {

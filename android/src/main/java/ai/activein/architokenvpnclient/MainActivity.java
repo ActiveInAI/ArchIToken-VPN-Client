@@ -1,6 +1,7 @@
 package ai.activein.architokenvpnclient;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.content.ClipData;
@@ -157,7 +158,7 @@ public class MainActivity extends Activity {
                 HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setConnectTimeout(10000);
                 conn.setReadTimeout(15000);
-                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.4.0");
+                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.5.0");
                 int code = conn.getResponseCode();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder body = new StringBuilder();
@@ -262,7 +263,11 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, ArchITokenVpnService.class);
         intent.setAction(ArchITokenVpnService.ACTION_START);
         intent.putExtra(ArchITokenVpnService.EXTRA_XRAY_OUTBOUND, lastNode.xrayJson());
-        startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
         output.setText("已请求启动 VPN。\n" + ArchITokenVpnService.status(this));
     }
 

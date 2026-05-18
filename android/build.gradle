@@ -6,17 +6,37 @@ android {
     namespace "ai.activein.architokenvpnclient"
     compileSdk 35
 
+    def releaseKeystore = System.getenv("ANDROID_KEYSTORE_FILE")
+    def releaseKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+    def releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
+    def releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+    def hasReleaseSigning = releaseKeystore && releaseKeystorePassword && releaseKeyAlias && releaseKeyPassword
+
     defaultConfig {
         applicationId "ai.activein.architokenvpnclient"
         minSdk 23
         targetSdk 35
-        versionCode 40
-        versionName "0.4.0"
+        versionCode 50
+        versionName "0.5.0"
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseKeystore)
+                storePassword releaseKeystorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
