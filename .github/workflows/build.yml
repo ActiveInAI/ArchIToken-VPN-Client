@@ -42,7 +42,7 @@ jobs:
             artifact: ArchIToken-VPN-Client-linux-arm64
             binary: ArchIToken-VPN-Client
             output: ArchIToken-VPN-Client-linux-arm64
-          - os: windows-latest
+          - os: windows-2025-vs2026
             artifact: ArchIToken-VPN-Client-windows-x86_64
             binary: ArchIToken-VPN-Client.exe
             output: ArchIToken-VPN-Client-windows-x86_64.exe
