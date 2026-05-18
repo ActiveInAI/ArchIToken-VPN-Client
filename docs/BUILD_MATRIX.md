@@ -1,6 +1,6 @@
 # Build Matrix
 
-`v0.5.0` 开始，Release 工作流覆盖以下目标。
+`v0.5.1` 开始，Release 工作流覆盖以下目标。
 
 ## Desktop
 

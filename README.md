@@ -53,7 +53,7 @@ ArchIToken-VPN Client 是 ArchIToken-VPN 的独立全平台客户端项目。它
 
 ## 当前 MVP
 
-当前 `0.5.0` 版本已经包含一个可运行的跨平台 MVP：
+当前 `0.5.1` 版本已经包含一个可运行的跨平台 MVP：
 
 - VLESS Reality 链接解析
 - base64/plain 订阅解析

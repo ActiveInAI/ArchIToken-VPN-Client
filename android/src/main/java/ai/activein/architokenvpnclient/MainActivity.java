@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
                 HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setConnectTimeout(10000);
                 conn.setReadTimeout(15000);
-                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.5.0");
+                conn.setRequestProperty("User-Agent", "ArchIToken-VPN-Android/0.5.1");
                 int code = conn.getResponseCode();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder body = new StringBuilder();
